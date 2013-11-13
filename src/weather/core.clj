@@ -48,13 +48,13 @@
 
 (average-temp 10)
 
-;; On how many of the next 10 days will be be cloudy?
+;; On how many of the next 10 days will be cloudy?
 
 (let [forecast-days (forecast "london,uk" {:cnt 10})
       cloudy #(= (:main (first (:weather %))) "Clouds")]
   (count (filter cloudy forecast-days)))
 
-;; On how many of the next 10 days will be be cloudy?
+;; On how many of the next 10 days will not be cloudy?
 
 (let [forecast-days (forecast "london,uk" {:cnt 10})
       cloudy #(= (:main (first (:weather %))) "Clouds")]
