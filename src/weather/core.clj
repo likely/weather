@@ -9,7 +9,7 @@
         response (http/get (str weather-api path) params)]
     (:body response)))
 
-(defn find [query]
+(defn search [query]
   (weather-response "find" {:query-params {:q query}}))
 
 (defn weather [location]
@@ -28,13 +28,14 @@
 
 ;; How many cities called London are there?
 
-(:count (find "london"))
+(:count (search "london"))
 
 ;; What are the lat/long positions of all the Londons?
 
-(map :coord (:list (find "london")))
+(let [londons (:list (search "london"))]
+  (map :coord londons))
 
-;;  What has been the average temperature of London, UK for the last 5 days? (hint: forecast?q=London)
+;;  What will be the average temperature of London, UK for the next 5 days? (hint: forecast?q=London)
 
 (defn average-temp [num-days]
   (let [forecast-days (forecast "london,uk" {:cnt num-days})
@@ -43,14 +44,19 @@
 
 (average-temp 5)
 
-;;  What has been the average temperature of London, UK for the last 10 days?
+;; What will be the average temperature of London, UK for the next 10 days
 
 (average-temp 10)
 
-;;  On how many of the last 10 days has it been cloudy?
+;; On how many of the next 10 days will be be cloudy?
 
-(count (filter #(= (:main (first (:weather %))) "Clouds") (forecast "london,uk" {:cnt 10})))
+(let [forecast-days (forecast "london,uk" {:cnt 10})
+      cloudy #(= (:main (first (:weather %))) "Clouds")]
+  (count (filter cloudy forecast-days)))
 
-;;  On how many of the last 10 days has it not been cloudy?
+;; On how many of the next 10 days will be be cloudy?
 
-(count (remove #(= (:main (first (:weather %))) "Clouds") (forecast "london,uk" {:cnt 10})))
+(let [forecast-days (forecast "london,uk" {:cnt 10})
+      cloudy #(= (:main (first (:weather %))) "Clouds")]
+  (count (remove cloudy forecast-days)))
+
