@@ -5,7 +5,9 @@
   "http://api.openweathermap.org/data/2.5/")
 
 (defn weather-response [path params]
-  (let [params (merge {:accept :json :as :json} params)
+  (let [params (merge {:accept :json
+                       :as :json}
+                      params)
         response (http/get (str weather-api path) params)]
     (:body response)))
 
@@ -39,7 +41,7 @@
 
 (defn average-temp [num-days]
   (let [forecast-days (forecast "london,uk" {:cnt num-days})
-        temps (map #(:day (:temp %)) forecast-days)]
+        temps (map #(get-in % [:temp :day]) forecast-days)]
     (/ (reduce + temps) (count temps))))
 
 (average-temp 5)
@@ -48,15 +50,15 @@
 
 (average-temp 10)
 
+(defn cloudy? [{:keys [weather]}]
+  (= "Clouds" (:main (first weather))))
+
 ;; On how many of the next 10 days will be cloudy?
 
-(let [forecast-days (forecast "london,uk" {:cnt 10})
-      cloudy #(= (:main (first (:weather %))) "Clouds")]
+(let [forecast-days (forecast "london,uk" {:cnt 10})]
   (count (filter cloudy forecast-days)))
 
 ;; On how many of the next 10 days will not be cloudy?
 
-(let [forecast-days (forecast "london,uk" {:cnt 10})
-      cloudy #(= (:main (first (:weather %))) "Clouds")]
-  (count (remove cloudy forecast-days)))
-
+(let [forecast-days (forecast "london,uk" {:cnt 10})]
+  (count (remove cloudy? forecast-days)))
