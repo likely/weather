@@ -56,7 +56,7 @@
 ;; On how many of the next 10 days will be cloudy?
 
 (let [forecast-days (forecast "london,uk" {:cnt 10})]
-  (count (filter cloudy forecast-days)))
+  (count (filter cloudy? forecast-days)))
 
 ;; On how many of the next 10 days will not be cloudy?
 
